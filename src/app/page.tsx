@@ -86,6 +86,8 @@ const FALLBACK_PRODUCTS: ProductItem[] = [
 ];
 
 async function getProducts(): Promise<ProductItem[]> {
+  "use cache";
+
   try {
     const dbProducts = await prisma.product.findMany({
       where: { isActive: true },
@@ -437,7 +439,7 @@ export default async function HomePage() {
         <p className="font-semibold text-stone-700">Saber En Piezas</p>
         <p className="mt-1">Hecho a mano y con tecnología en Tarímbaro, Michoacán.</p>
         <p className="mt-4">
-          © {new Date().getFullYear()} Saber En Piezas. Todos los derechos reservados.
+          © 2026 Saber En Piezas. Todos los derechos reservados.
         </p>
         <p className="mt-1 font-medium text-amber-800">
           Diseñado con ❤️ para la educación Michoacana.
