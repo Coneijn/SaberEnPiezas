@@ -1,8 +1,22 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
-// Productos base documentados para inicializar vista si la BD aún no tiene registros
-const FALLBACK_PRODUCTS = [
+interface ProductItem {
+  id?: string;
+  sku: string;
+  title: string;
+  slug: string;
+  material: string;
+  stage: string;
+  description: string;
+  price: number;
+  inventory?: {
+    stockOnHand: number;
+    stockReserved: number;
+  } | null;
+}
+
+const FALLBACK_PRODUCTS: ProductItem[] = [
   {
     sku: "SIL-MDF-01",
     title: "Silabario Didáctico",
@@ -12,6 +26,7 @@ const FALLBACK_PRODUCTS = [
     description:
       "Piezas táctiles para formar sílabas y palabras. Activa la conciencia fonológica y la memoria muscular mientras el niño toca, arma y descubre.",
     price: 280,
+    inventory: null,
   },
   {
     sku: "PUZ-3D-01",
@@ -22,6 +37,7 @@ const FALLBACK_PRODUCTS = [
     description:
       "Construye estructuras y figuras tridimensionales. Desarrolla la percepción viso-espacial y la planeación, ideal para futuros ingenieros.",
     price: 320,
+    inventory: null,
   },
   {
     sku: "MAT-FRAC-01",
@@ -32,6 +48,7 @@ const FALLBACK_PRODUCTS = [
     description:
       "Piezas de 1/1 a 6/6 para superponer y comparar. Convierte la aritmética abstracta en una evidencia física que el niño puede tocar.",
     price: 350,
+    inventory: null,
   },
   {
     sku: "ALG-TRIN-01",
@@ -42,6 +59,7 @@ const FALLBACK_PRODUCTS = [
     description:
       "Basado en Montessori. Permite visualizar (a+b+c)² en piezas de colores. El estudiante comprende la fórmula porque la construye.",
     price: 490,
+    inventory: null,
   },
   {
     sku: "ALG-BIN-01",
@@ -52,6 +70,7 @@ const FALLBACK_PRODUCTS = [
     description:
       "Demostración volumétrica de (a+b)³. Al armar el cubo y sus prismas, el alumno descubre la expansión algebraica de forma sensorial.",
     price: 520,
+    inventory: null,
   },
   {
     sku: "CUS-PUZ-01",
@@ -62,10 +81,11 @@ const FALLBACK_PRODUCTS = [
     description:
       "Convierte cualquier imagen (mapas, fotos, arte) en un puzzle único. Fomenta la concentración y la resolución de problemas.",
     price: 380,
+    inventory: null,
   },
 ];
 
-async function getProducts() {
+async function getProducts(): Promise<ProductItem[]> {
   try {
     const dbProducts = await prisma.product.findMany({
       where: { isActive: true },
@@ -86,11 +106,16 @@ async function getProducts() {
         stage: fallback?.stage ?? "Educativo",
         description: p.description ?? fallback?.description ?? "",
         price: Number(p.basePrice),
-        inventory: p.inventory,
+        inventory: p.inventory
+          ? {
+              stockOnHand: p.inventory.stockOnHand,
+              stockReserved: p.inventory.stockReserved,
+            }
+          : null,
       };
     });
   } catch (error) {
-    console.error("Error consultando productos de base de datos:", error);
+    console.error("Error al consultar la base de datos:", error);
     return FALLBACK_PRODUCTS;
   }
 }
@@ -199,10 +224,9 @@ export default async function HomePage() {
 
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {products.map((item) => {
-              const availableStock =
-                "inventory" in item && item.inventory
-                  ? item.inventory.stockOnHand - item.inventory.stockReserved
-                  : null;
+              const availableStock = item.inventory
+                ? item.inventory.stockOnHand - item.inventory.stockReserved
+                : null;
 
               return (
                 <div
@@ -216,11 +240,11 @@ export default async function HomePage() {
                       </span>
                       {availableStock !== null ? (
                         availableStock > 0 ? (
-                          <span className="text-emerald-700 font-semibold">
+                          <span className="font-semibold text-emerald-700">
                             {availableStock} en taller
                           </span>
                         ) : (
-                          <span className="text-amber-700 font-semibold">Corte bajo pedido</span>
+                          <span className="font-semibold text-amber-700">Corte bajo pedido</span>
                         )
                       ) : (
                         <span className="text-stone-400">Tarímbaro</span>
@@ -415,7 +439,7 @@ export default async function HomePage() {
         <p className="mt-4">
           © {new Date().getFullYear()} Saber En Piezas. Todos los derechos reservados.
         </p>
-        <p className="mt-1 text-amber-800 font-medium">
+        <p className="mt-1 font-medium text-amber-800">
           Diseñado con ❤️ para la educación Michoacana.
         </p>
       </footer>
