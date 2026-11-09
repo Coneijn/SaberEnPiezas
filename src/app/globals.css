@@ -1,26 +1,57 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+SABER EN PIEZAS — TOKENS DE MARCA (RUTA 3: COGNICIÓN ACTIVA)
+Paleta: Índigo Profundo (#1E1B4B), Verde Salvia (#0D9488), Ámbar (#D97706)
+========================================================================== */
+
+@theme {
+--color-indigo-950: #1E1B4B;
+--color-indigo-900: #272361;
+--color-indigo-50: #EEF2FF;
+
+--color-salvia-600: #0D9488;
+--color-salvia-700: #0F766E;
+--color-salvia-50: #F0FDFA;
+
+--color-ambar-500: #F59E0B;
+--color-ambar-600: #D97706;
+--color-ambar-700: #B45309;
+--color-ambar-50: #FFFBEB;
+
+--color-ceniza: #F1F5F9;
+--color-ceniza-hover: #E2E8F0;
+--color-carbon: #334155;
+
+/* Mapeo tipográfico conectado a Google Fonts via layout.tsx */
+--font-display: var(--font-lexend), ui-sans-serif, system-ui, sans-serif;
+--font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+--font-mono: var(--font-dm-mono), ui-monospace, monospace;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+--background: #F8FAFC;
+--foreground: #334155;
+--sep-indigo: #1E1B4B;
+--sep-salvia: #0D9488;
+--sep-ambar: #D97706;
+--sep-ceniza: #F1F5F9;
+--sep-carbon: #334155;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+background-color: var(--background);
+color: var(--foreground);
+font-family: var(--font-sans);
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+
+/* Retícula milimétrica sutil para fondos de laboratorio pedagógico */
+.bg-tech-grid {
+background-color: #FFFFFF;
+background-image:
+linear-gradient(to right, rgba(30, 27, 75, 0.04) 1px, transparent 1px),
+linear-gradient(to bottom, rgba(30, 27, 75, 0.04) 1px, transparent 1px);
+background-size: 24px 24px;
 }
